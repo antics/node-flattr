@@ -2,12 +2,16 @@ NodeJS module for Flattr API
 ============================
 
 
-## API
+# API
+
+## Flattrs
+
+    var flattrs = require('flattr').flattrs;
 
 ### flattrs.list(user, [count], [page], callback)
 
 List a users flattrs. `count` default to **30** and tells Flattr number of records
-to recieve, `page` defaults to **1**. 
+to retrieve, `page` defaults to **1**. 
 
     flattrs.list('flattr_user', 5, function (data, headers) {
 	    console.log(data);
