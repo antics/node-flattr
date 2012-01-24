@@ -1,6 +1,8 @@
 NodeJS module for Flattr API
 ============================
 
+Under heavy development. Give me a couple of days and this one will become 
+completed.
 
 # API
 
