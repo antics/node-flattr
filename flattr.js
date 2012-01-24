@@ -3,6 +3,7 @@ https = require('https'),
 querystring = require('querystring');
 
 module.exports.flattrs = new Flattrs();
+module.exports.things = new Things();
 
 // Flattr HTTPS URIs
 //
@@ -135,9 +136,84 @@ function Flattrs () {
 		
 		make_request(httpsopts, data, function (data, headers) {
 			callback(data, headers)
-		});
-		
+		});		
 	}
+}
+
+function Things () {
+
+	var self = this;
+
+	// List a users things
+	//
+	// Parameters
+	// user - user name
+	// count ( Optional ) - Number of records to receive
+	// page ( Optional ) - Page of results to retreive
+	// callback - callback function
+	//
+	self.list = function (user) {
+
+		var
+		count = (typeof arguments[1] === 'number') ? arguments[1] : '',
+		page  = (typeof arguments[2] === 'number') ? arguments[2] : '',
+		callback = arguments[arguments.length-1];
+				
+		var httpsopts = {
+			hostname: o.host,
+			path: o.endpoint+'/users/'+user+'/things/?count='+count+'&page='+page,
+			method: 'GET'
+		};
+
+		make_request(httpsopts, function (data, headers) {
+			callback(data, headers)
+		});
+	};
+
+	// List the authenticated users things
+	//
+	// Arguments
+	// count ( Optional ) - Number of records to receive 
+	// page ( Optional ) - Page of results to retreive 
+	// callback - callback function
+	//
+	self.list_auth = function () {
+
+		var
+		count = (typeof arguments[0] === 'number') ? arguments[0] : '',
+		page  = (typeof arguments[1] === 'number') ? arguments[1] : '',
+		callback = arguments[arguments.length-1];
+
+		var httpsopts = {
+			hostname: o.host,
+			path: o.endpoint+'/user/things/?count='+count+'&page='+page,
+			method: 'GET'
+		};
+
+		make_request(httpsopts, function (data, headers) {
+			callback(data, headers)
+		});
+	};
+
+	// Get a thing
+	//
+	// Arguments
+	// id - id of thing
+	// callback - callback function
+	//
+	self.get = function (id, callback) {
+		var httpsopts = {
+			hostname: o.host,
+			path: o.endpoint+'/things/'+id,
+			method: 'GET'
+		};
+
+		make_request(httpsopts, function (data, headers) {
+			callback(data, headers)
+		});
+	};
+
+	
 }
 
 // Https request helper function
