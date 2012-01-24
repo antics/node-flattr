@@ -1,5 +1,5 @@
-NodeJS module for Flattr API
-============================
+NodeJS module for the Flattr API
+================================
 
 Under heavy development. Give me a couple of days and this one will become 
 completed.
@@ -8,7 +8,7 @@ completed.
 
 ## Flattrs
 
-Resource for listing a users flattrs and flattr things.
+Resource for listing a users flattrs and to flattr things.
 
 http://developers.flattr.net/api/resources/flattrs/
 
@@ -37,7 +37,7 @@ Flattr a thing with id of `id`.
 	
 ### flattrs.url(url, user, [params], callback)
 
-Flattr an URL. `params` holds an object with optional query parameters to the
+Flattr an URL. `params` holds an object with optional query parameters for the
 auto-submit url.
 
     var params = {

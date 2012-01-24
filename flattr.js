@@ -213,7 +213,142 @@ function Things () {
 		});
 	};
 
-	
+	// Check if a thing exists
+	//
+	// Arguments
+	// url - The url to lookup
+	// callback - callback function
+	//
+	self.exists = function (url, callback) {
+		var httpsopts = {
+			hostname: o.host,
+			path: o.endpoint+'/things/lookup/?url='+
+				encodeURIComponent(/^(http|https):\/\//.test(url) ? url : 'http://'+url),
+			method: 'GET'
+		};
+
+		make_request(httpsopts, function (data, headers) {
+			callback(data, headers)
+		});
+	};
+
+	// Create a thing
+	//
+	// Arguments
+	// url - String url to submit
+	// params - Optional parameters, see below
+	// callback - callback function
+	//
+	// Parameters:
+	// title ( Optional ) - string Title of the new thing.
+	// description ( Optional ) - string Description text of the new thing.
+	// category ( Optional ) - string Default is "rest"
+	// language ( Optional ) - string Default is "en_GB"
+	// tags ( Optional ) - string Comma separated list of tags.
+	// hidden ( Optional ) - boolean Default is "false"
+	//
+	self.create = function (url) {
+
+		var
+		params = (typeof arguments[1] === 'object') ? arguments[1] : {},
+		callback = arguments[arguments.length-1];
+
+		params['url'] = /^(http|https):\/\//.test(url) ? url : 'http://'+url;
+		
+		var httpsopts = {
+			hostname: o.host,
+			path: o.endpoint+'/things',
+			method: 'POST'
+		};
+
+		make_request(httpsopts, params, function (data, headers) {
+			callback(data, headers)
+		});
+	};
+
+	// Update a thing
+	//
+	// Arguments
+	// id - id of thing to update
+	// params - Optional parameters, see below
+	// callback - callback function
+	//
+	// Parameters:
+	// title ( Optional ) - string Title of the new thing.
+	// description ( Optional ) - string Description text of the new thing.
+	// category ( Optional ) - string Default is "rest"
+	// language ( Optional ) - string Default is "en_GB"
+	// tags ( Optional ) - string Comma separated list of tags.
+	// hidden ( Optional ) - boolean Default is "false"
+	//
+	self.update = function (id) {
+
+		var
+		params = (typeof arguments[1] === 'object') ? arguments[1] : {},
+		callback = arguments[arguments.length-1];
+
+		// Flattr workaround for the PATCH request. See docs.
+		params['_method'] = 'patch';
+		
+		var httpsopts = {
+			hostname: o.host,
+			path: o.endpoint+'/things/'+id,
+			method: 'PATCH'
+		};
+
+		make_request(httpsopts, params, function (data, headers) {
+			callback(data, headers)
+		});
+	};
+
+	// Deletes a thing
+	//
+	// id - id of thing to delete
+	// callback - callback function
+	//
+	self.del = function (id, callback) {
+		var httpsopts = {
+			hostname: o.host,
+			path: o.endpoint+'/things/'+id,
+			method: 'DELETE'
+		};
+
+		make_request(httpsopts, function (data, headers) {
+			callback(data, headers)
+		});
+	};
+
+	// Search things
+	//
+	// params - object containing search params
+	// callback - callback function
+	//
+	// Params: 
+	// query (Optional) - string Free text search string
+	// tags (Optional) - string Filter by tags, separate with ,
+	// language (Optional) - string Filter by language
+ 	// category (Optional) - string Filter by category
+	// user (Optional) - string Filter by username
+	// page (Optional) - integer The result page to show
+	// count (Optional) - integer Number of items per page
+	//
+ 	self.search = function (params, callback) {
+
+		var query_str = '';
+		
+		for (key in params)
+			query_str += key+'='+params[key]+'&';
+
+		var httpsopts = {
+			hostname: o.host,
+			path: o.endpoint+'/things/search?'+query_str,
+			method: 'GET',
+		};
+		
+		make_request(httpsopts, function (data, headers) {
+			callback(data, headers)
+		});		
+	};
 }
 
 // Https request helper function
