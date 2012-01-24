@@ -43,8 +43,10 @@ auto-submit url.
 	};
 	
 	// With or without http/https is accepted.
-	flattrs.url('womenshealthmag.com/yoga/top-10-yoga-poses-for-men', 'flattr_user', params, function (data, headers) {
-	    console.log(data);
-	});
+	flattrs.url('womenshealthmag.com/yoga/top-10-yoga-poses-for-men', 'flattr_user', params, 
+	    function (data, headers) {
+	        console.log(data);
+	    }
+    );
 
 
