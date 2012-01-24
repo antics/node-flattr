@@ -6,6 +6,10 @@ NodeJS module for Flattr API
 
 ## Flattrs
 
+Resource for listing a users flattrs and flattr things.
+
+http://developers.flattr.net/api/resources/flattrs/
+
     var flattrs = require('flattr').flattrs;
 
 ### flattrs.list(user, [count], [page], callback)
