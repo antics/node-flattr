@@ -149,6 +149,7 @@ following parameters:
 * page - integer The result page to show
 * count - integer Number of items per page
 
+
     things.search({query: 'charity', category: 'trees'}, function (results, head) {
 	    // Results contains search results.
 		console.log(results);
