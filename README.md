@@ -61,7 +61,7 @@ auto-submit url.
 
 ## Things
 
-A resource to list and search for things.
+A resource to list, add, update and search for things.
 
 http://developers.flattr.net/api/resources/things/
 
@@ -151,7 +151,7 @@ following parameters:
 
     things.search({query: 'charity', category: 'trees'}, function (results, head) {
 	    // Results contains search results.
-	    console.log(results);
+		console.log(results);
 	});
 
 
