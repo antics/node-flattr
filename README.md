@@ -150,10 +150,10 @@ following parameters:
 * count - integer Number of items per page
 
 
-     things.search({query: 'charity', category: 'trees'}, function (results, head) {
-	     // Results contains search results.
-		 console.log(results);
-	 });
+    things.search({query: 'charity', category: 'trees'}, function (results, head) {
+	    // Results contains search results.
+		console.log(results);
+	});
 
 
 # Licence
