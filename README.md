@@ -59,6 +59,101 @@ auto-submit url.
 	    }
     );
 
+## Things
+
+A resource to list and search for things.
+
+http://developers.flattr.net/api/resources/things/
+
+    var things = require('flattr').things;
+
+### things.list(user, [count], [page], callback)
+
+List a users things. `count` is the number of records to retrieve, `page` is 
+page of results.
+
+    things.list('flattr', function (data, headers) {
+	    console.log(data);
+	});
+
+### things.list_auth([count], [page], callback)
+
+List things from the authenticated user.
+
+### things.get(id, callback)
+
+Get a thing.
+
+    things.get(423405, function (data, headers) {
+	    console.log(data);
+	});
+
+### things.exists(url, callback)
+
+Check if a thing exists by its URL.
+
+    things.exists(url, function (data, headers) {
+	    console.log(data);
+	}):
+	
+### things.create(url, [params], callback)
+
+Create/submit a new thing. Authorization is required.
+
+    // Optional parameters
+    var params = {
+	    title: 'Optional title',
+		description: 'Description of your thing',
+		// https://api.flattr.com/rest/v2/languages.txt
+		language: 'en_GB',
+		tags: 'yoga, top10, poses',
+		// 1 to hide from public listings
+		hidden: 1,
+		// https://api.flattr.com/rest/v2/categories.txt
+		category: 'text'
+	};
+	
+	// With or without http/https is accepted.
+	things.create('womenshealthmag.com/yoga/top-10-yoga-poses-for-men', params, 
+	    function (data, headers) {
+	        console.log(data);
+	    }
+    );
+	
+### things.update(id, [params], callback)
+
+Update a thing. Authorization is required.
+
+	things.update(45325, {title: 'Relax man'}, function (data, head) {
+	    console.log(data);
+	});
+
+### things.del(id, callback)
+
+Deletes a thing. Authorization is required.
+
+    things.del(543213, function (data, head) {
+	    console.log(data);
+    });
+
+### things.search(params, callback)
+
+Search for things. For the `params` argument use one or several of the 
+following parameters:
+
+* query - string Free text search string
+* tags - string Filter by tags, separate with ,
+* language - string Filter by language
+* category - string Filter by category
+* user - string Filter by username
+* page - integer The result page to show
+* count - integer Number of items per page
+
+    things.search({query: 'charity', category: 'trees'}, function (results, head) {
+	    // Results contains search results.
+	    console.log(results);
+	});
+
 
 # Licence
 Copyright (C) 2012 Humanity
