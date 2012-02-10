@@ -2,23 +2,46 @@ var
 https = require('https'),
 querystring = require('querystring');
 
-module.exports.flattrs = new Flattrs();
-module.exports.things = new Things();
-
 // Flattr HTTPS URIs
 //
 var
 options = {
 	host: 'api.flattr.com',
-	endpoint: '/rest/v2',
-	oauth2_auth: 'flattr.com/oauth/authorize',
-	oauth2_token: 'flattr.com/oauth/token'
+	endpoint: '/rest/v2'
 },
 o = options;
 
+module.exports.flattrs = new Flattrs();
+module.exports.things = new Things();
+module.exports.users = new Users();
+
+exports.request_token = function (app, code, callback) {
+	var
+	basic_auth = new Buffer(app.client_id+':'+app.client_secret).toString('base64'),
+	
+	httpsopts = {
+		hostname: 'flattr.com',
+		path: '/oauth/token',
+		method: 'POST',
+		headers: {
+			"Authorization": 'Basic '+basic_auth,			
+		}
+	},
+
+	reqdata = {
+		"code": code,
+		"grant_type": "authorization_code",
+		"redirect_uri": checkurl(app.redirect_uri)
+	};
+
+	make_request(httpsopts, reqdata, function (data, headers) {
+		callback(data.access_token);
+	});
+};
+
 // http://developers.flattr.net/api/resources/flattrs/
 function Flattrs () {
-
+	
 	var self = this;
 
 	// List a users flattrs
@@ -131,7 +154,7 @@ function Flattrs () {
 		},
 		data = {
 			"url": 'http://flattr.com/submit/auto?user_id='+user+'&url='+
-				encodeURIComponent(/^(http|https):\/\//.test(url) ? url : 'http://'+url)+query_str
+				encodeURIComponent(checkurl(url))+query_str
 		};
 		
 		make_request(httpsopts, data, function (data, headers) {
@@ -141,7 +164,7 @@ function Flattrs () {
 }
 
 function Things () {
-
+	
 	var self = this;
 
 	// List a users things
@@ -223,7 +246,7 @@ function Things () {
 		var httpsopts = {
 			hostname: o.host,
 			path: o.endpoint+'/things/lookup/?url='+
-				encodeURIComponent(/^(http|https):\/\//.test(url) ? url : 'http://'+url),
+				encodeURIComponent(checkurl(url)),
 			method: 'GET'
 		};
 
@@ -236,6 +259,7 @@ function Things () {
 	//
 	// Arguments
 	// url - String url to submit
+	// token - access_token
 	// params - Optional parameters, see below
 	// callback - callback function
 	//
@@ -247,18 +271,21 @@ function Things () {
 	// tags ( Optional ) - string Comma separated list of tags.
 	// hidden ( Optional ) - boolean Default is "false"
 	//
-	self.create = function (url) {
+	self.create = function (url, token) {
 
 		var
-		params = (typeof arguments[1] === 'object') ? arguments[1] : {},
+		params = (typeof arguments[2] === 'object') ? arguments[2] : {},
 		callback = arguments[arguments.length-1];
 
-		params['url'] = /^(http|https):\/\//.test(url) ? url : 'http://'+url;
-		
+		params["url"] = checkurl(url);
+
 		var httpsopts = {
 			hostname: o.host,
 			path: o.endpoint+'/things',
-			method: 'POST'
+			method: 'POST',
+			headers: {
+				"Authorization": "Bearer "+token
+			}
 		};
 
 		make_request(httpsopts, params, function (data, headers) {
@@ -351,6 +378,51 @@ function Things () {
 	};
 }
 
+function Users () {
+	var self = this;
+	
+	// Get a user
+	//
+	// Parameters
+	// user - user name
+	// callback - callback function
+	//
+	self.get = function (user, callback) {
+		
+		var httpsopts = {
+			hostname: o.host,
+			path: o.endpoint+'/users/'+user,
+			method: 'GET'
+		};
+		
+		make_request(httpsopts, function (data, headers) {
+			callback(data, headers)
+		});
+	};
+
+	// Get the authenticated user
+	//
+	// Parameters
+	// token - access token
+	// callback - callback function
+	//
+	self.get_auth = function (token, callback) {
+		
+		var httpsopts = {
+			hostname: o.host,
+			path: o.endpoint+'/user/',
+			method: 'GET',
+			headers: {
+				Authorization: 'Bearer '+token
+			}
+		};
+		
+		make_request(httpsopts, function (data, headers) {
+			callback(data, headers)
+		});
+	};
+}
+
 // Https request helper function
 //
 // Arguments
@@ -364,10 +436,14 @@ function make_request (httpsopts) {
 	reqdata  = (typeof arguments[1] === 'object') ? JSON.stringify(arguments[1]) : '',
 	callback = arguments[arguments.length-1];
 
-	httpsopts.headers = {
-		"Content-Length": reqdata.length,
-		"Content-Type": 'application/json'
-	};
+	if (reqdata) {
+
+		if (!httpsopts.headers)
+			httpsopts["headers"] = {};
+		
+		httpsopts.headers["Content-Length"] = reqdata.length;
+		httpsopts.headers["Content-Type"] = 'application/json';
+	}
 	
 	var req = https.request(httpsopts, function (res) {
 		var data = '';
@@ -386,6 +462,10 @@ function make_request (httpsopts) {
 	req.on('error', function (e) {
 		console.log(err);
 	});
-
+	
 	req.end(reqdata);
+}
+
+function checkurl (url) {
+	return /^(http|https):\/\//.test(url) ? url : 'http://'+url;
 }

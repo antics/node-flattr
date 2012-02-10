@@ -4,6 +4,16 @@ NodeJS module for the Flattr API
 Under heavy development. Give me a couple of days and this one will become 
 completed.
 
+# Get Started
+
+    flattr.request_token(code, function (token) {
+	    
+	});
+	
+    flattr.flattrs.list_auth(token, function () {
+	
+	});
+
 # API
 
 ## Flattrs
