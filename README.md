@@ -7,6 +7,7 @@ Under heavy development. Give me a couple of more days and this one will become
 completed.
 
 Status:
+
 * flattr.flattrs    OK
 * flattr.things     FAIL
 * flattr.users      FAIL
