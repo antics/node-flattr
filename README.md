@@ -57,7 +57,7 @@ http://developers.flattr.net/api/resources/flattrs/
 
 ### flattrs.list(user, [obj], callback)
 
-List a users flattrs. `params.count` default to **30** and tells Flattr number of records
+List a users flattrs. `obj.count` default to **30** and tells Flattr number of records
 to retrieve, `obj.page` defaults to **1**. 
 
     flattrs.list('flattr_user', {count: 5}, function (data) {
@@ -66,7 +66,7 @@ to retrieve, `obj.page` defaults to **1**.
 
 ### flattrs.list_auth(token, [obj], callback)
 
-List an authenticated users flattrs. `params.count` default to **30** and tells Flattr number of records
+List an authenticated users flattrs. `obj.count` default to **30** and tells Flattr number of records
 to retrieve, `obj.page` defaults to **1**.
 
     flattrs.list_auth(token, function (data) {
