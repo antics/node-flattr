@@ -7,12 +7,12 @@ Under heavy development. Give me a couple of more days and this one will become
 completed.
 
 Status:
-flattr.flattrs    OK
-flattr.things     FAIL
-flattr.users      FAIL
-flattr.activities TODO
-flattr.categories TODO
-flattr.languages  TODO
+* flattr.flattrs    OK
+* flattr.things     FAIL
+* flattr.users      FAIL
+* flattr.activities TODO
+* flattr.categories TODO
+* flattr.languages  TODO
 
 # Get Started
 
