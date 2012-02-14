@@ -75,7 +75,7 @@ function runtests(req, res) {
 			title: 'node-flattr: NodeJS module for the flattr API.',
 			tags: 'nodejs, module, api, flattr'
 		};
-		flattr.flattrs.url(token, 'https://github.com/antics/node-flattr', params, function (data) {
+		flattr.flattrs.url(token, 'https://github.com/antics/node-flattr', 'antics', params, function (data) {
 			done(res, {
 				resource: 'flattrs.url',
 				message: data.error ? data.error_description : data.description,

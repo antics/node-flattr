@@ -137,11 +137,16 @@ function Flattrs () {
 		});
 	};
 
+	//
+	// TODO: Check how this one works. What happens if one submits an url
+	// to flattr without the user_id param?
+	//
 	// Flattr an URL
 	// Params is also available if you auto-submit an url.
 	//
 	// token - access token
 	// url - URL of the thing
+	// user - user owning the thing
 	// params (optional) -  
 	//     title - Title of your your thing.
 	//     description -  Description for your thing.
@@ -155,7 +160,7 @@ function Flattrs () {
 	//
 	// callback - callback function
 	//
-	self.url = function (token, url, params, callback) {
+	self.url = function (token, url, user, params, callback) {
 
 		var query_str = '';
 		
@@ -177,7 +182,7 @@ function Flattrs () {
 		},
 
 		data = {
-			"url": 'http://flattr.com/submit/auto?url='+
+			"url": 'http://flattr.com/submit/auto?user_id='+user+'&url='+
 				encodeURIComponent(checkurl(url))+query_str
 		};
 		

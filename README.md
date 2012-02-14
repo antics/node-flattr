@@ -6,13 +6,40 @@ NodeJS module for the Flattr API
 Under heavy development. Give me a couple of more days and this one will become 
 completed.
 
+Status:
+flattr.flattrs    OK
+flattr.things     FAIL
+flattr.users      FAIL
+flattr.activities TODO
+flattr.categories TODO
+flattr.languages  TODO
+
 # Get Started
 
+Require the flattr module:
+    var flattr = require('flattr');
 
-	flattr.request_token(code, function (token) {
-		flattr.users.get_auth(token, function (user_data) {
-			
+
+List an authenticated users flattrs:
+	// First get your auth code by visiting:
+	// https://flattr.com/oauth/authorize?response_type=code&client_id=<app_key>
+	//
+    var app = {
+        client_id: '<app_key>',
+		client_secret: '<app_secret>',
+		// Must match your apps  callback url:
+		redirect_uri: 'http://localhost:8080/flattr'
+	};
+	
+	flattr.request_token(app, code, function (token) {
+		flattr.flattrs.list_auth(token, function (flattrs_list) {
+		    // do something
 		});
+	});
+	
+List a users (flattr) three latest flattrs:
+	flattr.flattrs.list('flattr', {count: 3}, function (flattrs) {
+        // do something
 	});
 	
 # API
@@ -25,31 +52,35 @@ http://developers.flattr.net/api/resources/flattrs/
 
     var flattrs = require('flattr').flattrs;
 
-### flattrs.list(user, [count], [page], callback)
+### flattrs.list(user, [obj], callback)
 
-List a users flattrs. `count` default to **30** and tells Flattr number of records
-to retrieve, `page` defaults to **1**. 
+List a users flattrs. `params.count` default to **30** and tells Flattr number of records
+to retrieve, `obj.page` defaults to **1**. 
 
-    flattrs.list('flattr_user', 5, function (data, headers) {
+    flattrs.list('flattr_user', {count: 5}, function (data) {
 	    console.log(data);
 	});
 
-### flattrs.list_auth([count], [page], callback)
+### flattrs.list_auth(token, [obj], callback)
 
-List the authenticated users flattrs.
+List an authenticated users flattrs. `params.count` default to **30** and tells Flattr number of records
+to retrieve, `obj.page` defaults to **1**.
 
-### flattrs.thing(id, callback)
+    flattrs.list_auth(token, function (data) {
+	    console.log(data);
+	});
+   
+### flattrs.thing(token, id, callback)
 
 Flattr a thing with id of `id`.
 
-    flattrs.id(423405, function (data, headers) {
+    flattrs.id(token, 423405, function (data) {
 	    console.log(data);
 	});
 	
-### flattrs.url(url, user, [params], callback)
+### flattrs.url(token, url, user, [obj], callback)
 
-Flattr an URL. `params` holds an object with optional query parameters for the
-auto-submit url.
+Flattr an URL. `obj` holds optional query parameters for the auto-submit url.
 
     var params = {
 	    title: 'Optional title',
@@ -64,108 +95,11 @@ auto-submit url.
 	};
 	
 	// With or without http/https is accepted.
-	flattrs.url('womenshealthmag.com/yoga/top-10-yoga-poses-for-men', 'flattr_user', params, 
-	    function (data, headers) {
+	flattrs.url(token, 'womenshealthmag.com/yoga/top-10-yoga-poses-for-men', 'flattr_user', params, 
+	    function (data) {
 	        console.log(data);
 	    }
     );
-
-## Things
-
-A resource to list, add, update and search for things.
-
-http://developers.flattr.net/api/resources/things/
-
-    var things = require('flattr').things;
-
-### things.list(user, [count], [page], callback)
-
-List a users things. `count` is the number of records to retrieve, `page` is 
-page of results.
-
-    things.list('flattr', function (data, headers) {
-	    console.log(data);
-	});
-
-### things.list_auth([count], [page], callback)
-
-List things from the authenticated user.
-
-### things.get(id, callback)
-
-Get a thing.
-
-    things.get(423405, function (data, headers) {
-	    console.log(data);
-	});
-
-### things.exists(url, callback)
-
-Check if a thing exists by its URL.
-
-    things.exists(url, function (data, headers) {
-	    console.log(data);
-	}):
-	
-### things.create(url, [params], callback)
-
-Create/submit a new thing. Authorization is required.
-
-    // Optional parameters
-    var params = {
-	    title: 'Optional title',
-		description: 'Description of your thing',
-		// https://api.flattr.com/rest/v2/languages.txt
-		language: 'en_GB',
-		tags: 'yoga, top10, poses',
-		// 1 to hide from public listings
-		hidden: 1,
-		// https://api.flattr.com/rest/v2/categories.txt
-		category: 'text'
-	};
-	
-	// With or without http/https is accepted.
-	things.create('womenshealthmag.com/yoga/top-10-yoga-poses-for-men', params, 
-	    function (data, headers) {
-	        console.log(data);
-	    }
-    );
-	
-### things.update(id, [params], callback)
-
-Update a thing. Authorization is required.
-
-	things.update(45325, {title: 'Relax man'}, function (data, head) {
-	    console.log(data);
-	});
-
-### things.del(id, callback)
-
-Deletes a thing. Authorization is required.
-
-    things.del(543213, function (data, head) {
-	    console.log(data);
-    });
-
-### things.search(params, callback)
-
-Search for things. For the `params` argument use one or several of the 
-following parameters:
-
-* query - string Free text search string
-* tags - string Filter by tags, separate with ,
-* language - string Filter by language
-* category - string Filter by category
-* user - string Filter by username
-* page - integer The result page to show
-* count - integer Number of items per page
-
-
-    things.search({query: 'charity', category: 'trees'}, function (results, head) {
-	    // Results contains search results.
-		console.log(results);
-	});
-
 
 # Licence
 Copyright (C) 2012 Humanity
