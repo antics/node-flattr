@@ -15,10 +15,19 @@ module.exports.flattrs = new Flattrs();
 module.exports.things = new Things();
 module.exports.users = new Users();
 
+// Requst an access token for authorized requests
+//
+// app - object containing application data
+//    client_id
+//    client_secret
+//    redirect_uri
+// code - string in ?code=
+// callback - callback function
+//
 exports.request_token = function (app, code, callback) {
 	var
 	basic_auth = new Buffer(app.client_id+':'+app.client_secret).toString('base64'),
-	
+
 	httpsopts = {
 		hostname: 'flattr.com',
 		path: '/oauth/token',
@@ -34,7 +43,7 @@ exports.request_token = function (app, code, callback) {
 		"redirect_uri": checkurl(app.redirect_uri)
 	};
 
-	make_request(httpsopts, reqdata, function (data, headers) {
+	make_request(httpsopts, reqdata, function (data) {
 		callback(data.access_token);
 	});
 };
@@ -46,120 +55,135 @@ function Flattrs () {
 
 	// List a users flattrs
 	//
-	// Parameters
 	// user - user name
-	// count ( Optional ) - Number of records to receive
-	// page ( Optional ) - Page of results to retreive
+	// params (optional) - param object:
+	//     count - Number of records to receive
+	//     page  - Page of results to retreive
 	// callback - callback function
 	//
-	self.list = function (user) {
+	self.list = function (user, params, callback) {
 
-		// Params
-		var
-		count = (typeof arguments[1] === 'number') ? arguments[1] : '',
-		page  = (typeof arguments[2] === 'number') ? arguments[2] : '',
-		callback = arguments[arguments.length-1];
-				
+		var count = '', page = '';
+
+		if (typeof params == 'object') {
+			count = params.count;
+			page  = params.page;
+		}
+		else if (typeof params == 'function')
+			callback = params;
+
 		var httpsopts = {
 			hostname: o.host,
-			path: o.endpoint+'/users/'+user+'/flattrs/?count='+count+'&page='+page,
+			path: o.endpoint +'/users/'+user+'/flattrs?count='+count+'&page='+page,
 			method: 'GET'
 		};
-
-		make_request(httpsopts, function (data, headers) {
-			callback(data, headers)
+		
+		make_request(httpsopts, function (data) {
+			callback(data);
 		});
 	};
 
 	// List the authenticated users flattrs
 	//
-	// Arguments
-	// count ( Optional ) - Number of records to receive 
-	// page ( Optional ) - Page of results to retreive 
+	// token - access token
+	// params (optional) - param object:
+	//     count - Number of records to receive
+	//     page  - Page of results to retreive
 	// callback - callback function
 	//
-	self.list_auth = function () {
+	self.list_auth = function (token, params, callback) {
 
-		var
-		count = (typeof arguments[0] === 'number') ? arguments[0] : '',
-		page  = (typeof arguments[1] === 'number') ? arguments[1] : '',
-		callback = arguments[arguments.length-1];
+		var count = '', page = '';
 
+		if (typeof params == 'object') {
+			count = params.count;
+			page  = params.page;
+		}
+		else if (typeof params == 'function')
+			callback = params;
+		
 		var httpsopts = {
 			hostname: o.host,
-			path: o.endpoint+'/user/flattrs/?count='+count+'&page='+page,
-			method: 'GET'
+			path: o.endpoint+'/user/flattrs?count='+count+'&page='+page,
+			method: 'GET',
+			headers: {
+				"Authorization": "Bearer "+token
+			}
 		};
 
-		make_request(httpsopts, function (data, headers) {
-			callback(data, headers)
+		make_request(httpsopts, function (data) {
+			callback(data);
 		});
 	};
 
 	// Flattr a thing
 	//
-	// Arguments
+	// token - access token
 	// id - id of thing to flattr
-	// callback - callback function
+	// callback (optional)  - callback function
 	//
-	self.thing = function (id, callback) {
+	self.thing = function (token, id, callback) {
 		var httpsopts = {
 			hostname: o.host,
 			path: o.endpoint+'/things/'+id+'/flattr',
-			method: 'POST'
+			method: 'POST',
+			headers: {
+				"Authorization": "Bearer "+token
+			}
 		};
 
-		make_request(httpsopts, function (data, headers) {
-			callback(data, headers)
+		make_request(httpsopts, {}, function (data) {
+			callback(data);
 		});
-		
-	}
+	};
 
 	// Flattr an URL
+	// Params is also available if you auto-submit an url.
 	//
-	// Arguments
-	// url - URL of th thing
-	// user - flattr user name
-	// params (optional) -  Parameters, see below
+	// token - access token
+	// url - URL of the thing
+	// params (optional) -  
+	//     title - Title of your your thing.
+	//     description -  Description for your thing.
+	//     language - Language of your page, use one of the available
+	//         languages.
+	//     tags - Tags you want your post to be tagged with. Multiple
+	//         tags are separated with ,
+	//     hidden - If you want to hide the things from public listings
+	//         on flattr.com set hidden to 1.
+	//     category - Category from the list of categories found here.
+	//
 	// callback - callback function
 	//
-	// Optional parameters
-	// title (Optional) - Title of your your thing.
-	// description (Optional) - Description for your thing.
-	// language (Optional) - Language of your page, use one of the available languages.
-	// tags (Optional) - Tags you want your post to be tagged with. Multiple tags are separated with ,
-	// hidden (Optional) - If you want to hide the things from public listings on flattr.com set hidden to 1.
-	// category (Optional) - Category from the list of categories found here.
-	//	
-	self.url = function (url, user) {
+	self.url = function (token, url, params, callback) {
 
 		var query_str = '';
 		
-		// arguments[2] == Optional parameters
-		if (typeof arguments[2] === 'object') {
-			var params = arguments[2];
-			
+		if (typeof params == 'object') {
 			for (key in params)
 				query_str += '&'+key+'='+params[key];
 		}
-
-		if (arguments.length > 2)
-			var callback = arguments[arguments.length-1];
+		else if (typeof params == 'function')
+			callback = params;
 
 		var
 		httpsopts = {
 			hostname: o.host,
 			path: o.endpoint+'/flattr',
 			method: 'POST',
+			headers: {
+				"Authorization": "Bearer "+token
+			}
 		},
+
 		data = {
-			"url": 'http://flattr.com/submit/auto?user_id='+user+'&url='+
+			"url": 'http://flattr.com/submit/auto?url='+
 				encodeURIComponent(checkurl(url))+query_str
 		};
 		
-		make_request(httpsopts, data, function (data, headers) {
-			callback(data, headers)
-		});		
+		make_request(httpsopts, data, function (resp) {
+			callback(resp);
+		});
 	}
 }
 
@@ -455,7 +479,13 @@ function make_request (httpsopts) {
 		});
 
 		res.on('end', function () {
-			callback(JSON.parse(data), res.headers);
+			try {
+				data = JSON.parse(data);
+				callback(data, res.headers);
+			}
+			catch (e) {
+				console.log(data);
+			}
 		});
 	});
 
