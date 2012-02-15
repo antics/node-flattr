@@ -470,7 +470,6 @@ function Users () {
 	
 	// Get a user
 	//
-	// Parameters
 	// user - user name
 	// callback - callback function
 	//
@@ -481,15 +480,14 @@ function Users () {
 			path: o.endpoint+'/users/'+user,
 			method: 'GET'
 		};
-		
-		make_request(httpsopts, function (data, headers) {
-			callback(data, headers)
+
+		make_request(httpsopts, function (data) {
+			callback(data)
 		});
 	};
 
 	// Get the authenticated user
 	//
-	// Parameters
 	// token - access token
 	// callback - callback function
 	//
@@ -497,15 +495,15 @@ function Users () {
 		
 		var httpsopts = {
 			hostname: o.host,
-			path: o.endpoint+'/user/',
+			path: o.endpoint+'/user',
 			method: 'GET',
 			headers: {
-				Authorization: 'Bearer '+token
+				"Authorization": "Bearer "+token
 			}
 		};
-		
-		make_request(httpsopts, function (data, headers) {
-			callback(data, headers)
+
+		make_request(httpsopts, function (data) {
+			callback(data)
 		});
 	};
 }

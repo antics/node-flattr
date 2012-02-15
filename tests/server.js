@@ -5,9 +5,9 @@ flattr = require('../flattr');
 
 var app =  {
 	client_id:
-	'w0HQL9L9mcAG4Ye7FzN44L7MnsiPJ9150yMCynBKq2gkRlimKVhFxeiLxqq6qh2g',
+	'Gt99XPvl1FpjYUdnXqbV5vagxViYvbO2uN2hsntjSJtHtwUhNW2Ii3PFOXtaY72j',
 	client_secret:
-	'GEI4SaE82LjKWrWxd42A9acwqstGzmN6Rm0zmvyf7IQUZCh3w9tw9vSqObXeoAa5',
+	'LVr38KdRkwoDT9KxWD64xLAbzUcoR5xtQOmOpqvANK4xJEUw8QqwsRxRBA6jvuCb',
 	redirect_uri: 'http://localhost:8080/flattr'
 };
 
@@ -19,7 +19,7 @@ http.createServer(function (req, res) {
 	var path = url.parse(req.url).pathname;
 
 	if (path == '/') {
-		res.end('<a href="https://flattr.com/oauth/authorize?response_type=code&client_id=w0HQL9L9mcAG4Ye7FzN44L7MnsiPJ9150yMCynBKq2gkRlimKVhFxeiLxqq6qh2g&scope=flattr thing extendedread">Login to flattr.</a>');
+		res.end('<a href="https://flattr.com/oauth/authorize?response_type=code&client_id='+app.client_id+'&scope=flattr thing extendedread">Login to flattr.</a>');
 	}
 	else if (path == '/flattr') {
 		runtests(req, res);
@@ -33,7 +33,7 @@ http.createServer(function (req, res) {
 
 function runtests(req, res) {
 
-	NUM_TESTS = 1;
+	NUM_TESTS = 3;
 	
 	var code = url.parse(req.url, true).query.code;
 
@@ -145,6 +145,22 @@ function runtests(req, res) {
 			done(res, {
 				resource: 'things.search',
 				message: data.error ? data.error_description : 'Total: '+data.total_items,
+				status: data.error ? true : false
+			});							
+		});
+
+		flattr.users.get('flattr', function (data) {
+			done(res, {
+				resource: 'users.get',
+				message: data.error ? data.error_description : data.username,
+				status: data.error ? true : false
+			});							
+		});
+
+		flattr.users.get_auth(token, function (data) {
+			done(res, {
+				resource: 'users.get_auth',
+				message: data.error ? data.error_description : data.username,
 				status: data.error ? true : false
 			});							
 		});

@@ -10,7 +10,7 @@ Status:
 
 * flattr.flattrs **OK**
 * flattr.things  **OK**
-* flattr.users   **FAIL**
+* flattr.users   **OK**
 * flattr.activities **TODO**
 * flattr.categories **TODO**
 * flattr.languages  **TODO**
@@ -161,6 +161,23 @@ Delete thing with id `id`.
 ### things.search(params, callback)
 
 Search for things. `params` holds object with search parameters. See http://developers.flattr.net/api/resources/things/#search-things
+
+
+## Users
+
+Resource to get user data.
+
+http://developers.flattr.net/api/resources/users/
+
+    var users = require('flattr').users;
+	
+### users.get(user, callback)
+
+Retrieve user data on `user`.
+
+### users.get_auth(token, callback)
+
+Retrieve user data on authenticated user.
 
 # Licence
 Copyright (C) 2012 Humanity
