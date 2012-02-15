@@ -2,19 +2,13 @@
 	"author": "Michel Legnered <michel.legnered@gmail.com> (http://github.com/antics)",
 	"name": "flattr",
 	"description": "Module for communicating with the Flattr API.",
-	"version": "0.0",
+	"version": "0.5",
 	"repository": {
 		"type": "git",
-		"url": "git://github.com:antics/flattr.git"
+		"url": "git://github.com/antics/node-flattr.git"
 	},
 	"main": "./flattr.js",
 	"engines": {
 		"node": ">=0.4.7"
-	},
-	"dependencies": {
-		"SOMETHING": "*"
-	},
-	"devDependencies": {
-		"SOMETHING": "*"
 	}
 }
