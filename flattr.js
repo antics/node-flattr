@@ -262,9 +262,6 @@ function Things () {
 
 	// Get a thing
 	//
-	// TODO: Getting multiple things results in an "unauthorized to access"
-	// error. Are the docs wrong?
-	//
 	// Arguments
 	// id - id of thing or array of ids
 	// token - optional access token
@@ -275,17 +272,17 @@ function Things () {
 		var ids = '';
 		
 		if (typeof id === 'number')
-			ids = '/'+id;
+			ids = id;
 		// Array:
 		else {
-			ids = '?id='+id;
+			ids = id[0];
 			for (i=1; i<id.length; i++)
 				ids += ','+id[i];
 		}
 
 		var httpsopts = {
 			hostname: o.host,
-			path: o.endpoint+'/things'+ids,
+			path: o.endpoint+'/things/'+ids,
 			method: 'GET'
 		};
 

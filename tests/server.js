@@ -4,10 +4,8 @@ url = require('url'),
 flattr = require('../flattr');
 
 var app =  {
-	client_id:
-	'Gt99XPvl1FpjYUdnXqbV5vagxViYvbO2uN2hsntjSJtHtwUhNW2Ii3PFOXtaY72j',
-	client_secret:
-	'LVr38KdRkwoDT9KxWD64xLAbzUcoR5xtQOmOpqvANK4xJEUw8QqwsRxRBA6jvuCb',
+	client_id: '',
+	client_secret: '',
 	redirect_uri: 'http://localhost:8080/flattr'
 };
 
@@ -33,7 +31,7 @@ http.createServer(function (req, res) {
 
 function runtests(req, res) {
 
-	NUM_TESTS = 3;
+	NUM_TESTS = 2;
 	
 	var code = url.parse(req.url, true).query.code;
 
@@ -91,7 +89,7 @@ function runtests(req, res) {
 				status: data.error ? true : false
 			});	
 		});
-
+		*/
 		flattr.things.get(423405, function (data) {
 			done(res, {
 				resource: 'things.get',
@@ -107,7 +105,7 @@ function runtests(req, res) {
 				status: data.error ? true : false
 			});	
 		});
-
+		/*
 		flattr.things.exists('https://github.com/antics/node-flattr', function (data) {
 			done(res, {
 				resource: 'things.exists',
@@ -139,7 +137,6 @@ function runtests(req, res) {
 				status: data.error ? true : false
 			});				
 		});
-		*/
 
 		flattr.things.search({query: "nature", tags: 'photo'}, function (data) {
 			done(res, {
@@ -164,6 +161,8 @@ function runtests(req, res) {
 				status: data.error ? true : false
 			});							
 		});
+
+		*/
 	});
 };
 
