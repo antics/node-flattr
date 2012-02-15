@@ -65,11 +65,11 @@ function Flattrs () {
 
 		var count = '', page = '';
 
-		if (typeof params == 'object') {
+		if (typeof params === 'object') {
 			count = params.count;
 			page  = params.page;
 		}
-		else if (typeof params == 'function')
+		else if (typeof params === 'function')
 			callback = params;
 
 		var httpsopts = {
@@ -95,11 +95,11 @@ function Flattrs () {
 
 		var count = '', page = '';
 
-		if (typeof params == 'object') {
+		if (typeof params === 'object') {
 			count = params.count;
 			page  = params.page;
 		}
-		else if (typeof params == 'function')
+		else if (typeof params === 'function')
 			callback = params;
 		
 		var httpsopts = {
@@ -164,11 +164,11 @@ function Flattrs () {
 
 		var query_str = '';
 		
-		if (typeof params == 'object') {
+		if (typeof params === 'object') {
 			for (key in params)
 				query_str += '&'+key+'='+params[key];
 		}
-		else if (typeof params == 'function')
+		else if (typeof params === 'function')
 			callback = params;
 
 		var
@@ -200,111 +200,158 @@ function Things () {
 	//
 	// Parameters
 	// user - user name
-	// count ( Optional ) - Number of records to receive
-	// page ( Optional ) - Page of results to retreive
+	// params (optional) - param object:
+	//     count - Number of records to retrieve
+	//     page  - Page of results to retrieve
 	// callback - callback function
 	//
-	self.list = function (user) {
+	self.list = function (user, params, callback) {
 
-		var
-		count = (typeof arguments[1] === 'number') ? arguments[1] : '',
-		page  = (typeof arguments[2] === 'number') ? arguments[2] : '',
-		callback = arguments[arguments.length-1];
-				
+		var count = '', page = '';
+
+		if (typeof params === 'object') {
+			count = params.count;
+			page = params.page;
+		}
+		else if (typeof params === 'function')
+			callback = params;
+						
 		var httpsopts = {
 			hostname: o.host,
-			path: o.endpoint+'/users/'+user+'/things/?count='+count+'&page='+page,
+			path: o.endpoint+'/users/'+user+'/things?count='+count+'&page='+page,
 			method: 'GET'
 		};
 
-		make_request(httpsopts, function (data, headers) {
-			callback(data, headers)
+		make_request(httpsopts, function (data) {
+			callback(data)
 		});
 	};
 
 	// List the authenticated users things
 	//
-	// Arguments
-	// count ( Optional ) - Number of records to receive 
-	// page ( Optional ) - Page of results to retreive 
+	// token - access token
+	// params (optional) - param object:
+	//     count - Number of records to retrieve
+	//     page  - Page of results to retrieve
 	// callback - callback function
 	//
-	self.list_auth = function () {
+	self.list_auth = function (token, params, callback) {
 
-		var
-		count = (typeof arguments[0] === 'number') ? arguments[0] : '',
-		page  = (typeof arguments[1] === 'number') ? arguments[1] : '',
-		callback = arguments[arguments.length-1];
+		var count = '', page = '';
+
+		if (typeof params === 'object') {
+			count = params.count;
+			page = params.page;
+		}
+		else if (typeof params === 'function')
+			callback = params;
 
 		var httpsopts = {
 			hostname: o.host,
-			path: o.endpoint+'/user/things/?count='+count+'&page='+page,
-			method: 'GET'
+			path: o.endpoint+'/user/things?count='+count+'&page='+page,
+			method: 'GET',
+			headers: {
+				"Authorization": "Bearer "+token
+			}
 		};
 
-		make_request(httpsopts, function (data, headers) {
-			callback(data, headers)
+		make_request(httpsopts, function (data) {
+			callback(data)
 		});
 	};
 
 	// Get a thing
 	//
+	// TODO: Getting multiple things results in an "unauthorized to access"
+	// error. Are the docs wrong?
+	//
 	// Arguments
-	// id - id of thing
+	// id - id of thing or array of ids
+	// token - optional access token
 	// callback - callback function
 	//
-	self.get = function (id, callback) {
+	self.get = function (id, token, callback) {
+
+		var ids = '';
+		
+		if (typeof id === 'number')
+			ids = '/'+id;
+		// Array:
+		else {
+			ids = '?id='+id;
+			for (i=1; i<id.length; i++)
+				ids += ','+id[i];
+		}
+
 		var httpsopts = {
 			hostname: o.host,
-			path: o.endpoint+'/things/'+id,
+			path: o.endpoint+'/things'+ids,
 			method: 'GET'
 		};
 
-		make_request(httpsopts, function (data, headers) {
-			callback(data, headers)
+		if (typeof token === 'string')
+			httpsopts['headers'] = { "Authorization": "Bearer "+token }
+		else if (typeof token === 'function')
+			callback = token;
+
+		make_request(httpsopts, function (data) {
+			callback(data)
 		});
 	};
 
 	// Check if a thing exists
 	//
-	// Arguments
 	// url - The url to lookup
+	// autosubmit - set to true to check an auto submit url
 	// callback - callback function
 	//
-	self.exists = function (url, callback) {
+	self.exists = function (url, autosubmit, callback) {
+
+		var query = '';
+		
+		if (autosubmit === true) {
+			query = 'http://flattr.com/submit/auto?url='+
+				encodeURIComponent(checkurl(url));
+		}
+		else if (typeof autosubmit === 'function') {
+			query = checkurl(url);
+			callback = autosubmit;
+		}
+		
 		var httpsopts = {
 			hostname: o.host,
-			path: o.endpoint+'/things/lookup/?url='+
-				encodeURIComponent(checkurl(url)),
+			path: o.endpoint+'/things/lookup?url='+query,
 			method: 'GET'
 		};
 
-		make_request(httpsopts, function (data, headers) {
-			callback(data, headers)
+		make_request(httpsopts, function (data) {
+			callback(data)
 		});
 	};
 
 	// Create a thing
 	//
-	// Arguments
-	// url - String url to submit
 	// token - access_token
-	// params - Optional parameters, see below
+	// url - String url to submit
+	// params (optional) -  
+	//     title - Title of your your thing.
+	//     description -  Description for your thing.
+	//     language - Language of your page, use one of the available
+	//         languages.
+	//     tags - Tags you want your post to be tagged with. Multiple
+	//         tags are separated with ,
+	//     hidden - If you want to hide the things from public listings
+	//         on flattr.com set hidden to 1.
+	//     category - Category from the list of categories found here.
+	//
 	// callback - callback function
 	//
-	// Parameters:
-	// title ( Optional ) - string Title of the new thing.
-	// description ( Optional ) - string Description text of the new thing.
-	// category ( Optional ) - string Default is "rest"
-	// language ( Optional ) - string Default is "en_GB"
-	// tags ( Optional ) - string Comma separated list of tags.
-	// hidden ( Optional ) - boolean Default is "false"
-	//
-	self.create = function (url, token) {
+	self.create = function (token, url, params, callback) {
 
-		var
-		params = (typeof arguments[2] === 'object') ? arguments[2] : {},
-		callback = arguments[arguments.length-1];
+		if (typeof params === 'function') {
+			callback = params;
+			params = {};
+		}
 
 		params["url"] = checkurl(url);
 
@@ -317,31 +364,35 @@ function Things () {
 			}
 		};
 
-		make_request(httpsopts, params, function (data, headers) {
-			callback(data, headers)
+		make_request(httpsopts, params, function (data) {
+			callback(data)
 		});
 	};
 
+
 	// Update a thing
 	//
-	// Arguments
-	// id - id of thing to update
-	// params - Optional parameters, see below
+	// token - access_token
+	// id - id of string
+	// params (optional) -  
+	//     title - Title of your your thing.
+	//     description -  Description for your thing.
+	//     language - Language of your page, use one of the available
+	//         languages.
+	//     tags - Tags you want your post to be tagged with. Multiple
+	//         tags are separated with ,
+	//     hidden - If you want to hide the things from public listings
+	//         on flattr.com set hidden to 1.
+	//     category - Category from the list of categories found here.
+	//
 	// callback - callback function
 	//
-	// Parameters:
-	// title ( Optional ) - string Title of the new thing.
-	// description ( Optional ) - string Description text of the new thing.
-	// category ( Optional ) - string Default is "rest"
-	// language ( Optional ) - string Default is "en_GB"
-	// tags ( Optional ) - string Comma separated list of tags.
-	// hidden ( Optional ) - boolean Default is "false"
-	//
-	self.update = function (id) {
+	self.update = function (token, id, params, callback) {
 
-		var
-		params = (typeof arguments[1] === 'object') ? arguments[1] : {},
-		callback = arguments[arguments.length-1];
+		if (typeof params === 'function') {
+			callback = params;
+			params = {};
+		}
 
 		// Flattr workaround for the PATCH request. See docs.
 		params['_method'] = 'patch';
@@ -349,58 +400,65 @@ function Things () {
 		var httpsopts = {
 			hostname: o.host,
 			path: o.endpoint+'/things/'+id,
-			method: 'PATCH'
+			method: 'PATCH',
+			headers: {
+				"Authorization": "Bearer "+token
+			}
 		};
 
-		make_request(httpsopts, params, function (data, headers) {
-			callback(data, headers)
+		make_request(httpsopts, params, function (data) {
+			callback(data)
 		});
 	};
 
 	// Deletes a thing
 	//
+	// token - access token
 	// id - id of thing to delete
 	// callback - callback function
 	//
-	self.del = function (id, callback) {
+	self.del = function (token, id, callback) {
 		var httpsopts = {
 			hostname: o.host,
 			path: o.endpoint+'/things/'+id,
-			method: 'DELETE'
+			method: 'DELETE',
+			headers: {
+				"Authorization": "Bearer "+token
+			}
 		};
 
-		make_request(httpsopts, function (data, headers) {
-			callback(data, headers)
+		make_request(httpsopts, {}, function (data) {
+			console.log('DATA', data);
+			callback(data.error_description ? data : { message: 'ok' });
 		});
 	};
 
 	// Search things
 	//
 	// params - object containing search params
-	// callback - callback function
+	//     query (Optional) - string Free text search string
+	//     tags (Optional) - string Filter by tags, separate with ,
+	//     language (Optional) - string Filter by language
+ 	//     category (Optional) - string Filter by category
+	//     user (Optional) - string Filter by username
+	//     page (Optional) - integer The result page to show
+	//     count (Optional) - integer Number of items per page
 	//
-	// Params: 
-	// query (Optional) - string Free text search string
-	// tags (Optional) - string Filter by tags, separate with ,
-	// language (Optional) - string Filter by language
- 	// category (Optional) - string Filter by category
-	// user (Optional) - string Filter by username
-	// page (Optional) - integer The result page to show
-	// count (Optional) - integer Number of items per page
+	// callback - callback function
 	//
  	self.search = function (params, callback) {
 
 		var query_str = '';
-		
+
 		for (key in params)
-			query_str += key+'='+params[key]+'&';
+			query_str += key+'='+encodeURIComponent(params[key])+'&';
 
 		var httpsopts = {
 			hostname: o.host,
 			path: o.endpoint+'/things/search?'+query_str,
 			method: 'GET',
 		};
-		
+
 		make_request(httpsopts, function (data, headers) {
 			callback(data, headers)
 		});		
@@ -484,18 +542,19 @@ function make_request (httpsopts) {
 		});
 
 		res.on('end', function () {
+			//console.log(data);
 			try {
 				data = JSON.parse(data);
 				callback(data, res.headers);
 			}
 			catch (e) {
-				console.log(data);
+				callback({}, res.headers);
 			}
 		});
 	});
 
 	req.on('error', function (e) {
-		console.log(err);
+		console.log(e);
 	});
 	
 	req.end(reqdata);

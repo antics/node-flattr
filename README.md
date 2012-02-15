@@ -9,7 +9,7 @@ completed.
 Status:
 
 * flattr.flattrs **OK**
-* flattr.things  **FAIL**
+* flattr.things  **OK**
 * flattr.users   **FAIL**
 * flattr.activities **TODO**
 * flattr.categories **TODO**
@@ -57,8 +57,7 @@ http://developers.flattr.net/api/resources/flattrs/
 
 ### flattrs.list(user, [obj], callback)
 
-List a users flattrs. `params.count` default to **30** and tells Flattr number of records
-to retrieve, `obj.page` defaults to **1**. 
+List a users flattrs. `obj.count` default to **30** and tells Flattr number of records to retrieve, `obj.page` defaults to **1**. 
 
     flattrs.list('flattr_user', {count: 5}, function (data) {
 	    console.log(data);
@@ -66,8 +65,7 @@ to retrieve, `obj.page` defaults to **1**.
 
 ### flattrs.list_auth(token, [obj], callback)
 
-List an authenticated users flattrs. `params.count` default to **30** and tells Flattr number of records
-to retrieve, `obj.page` defaults to **1**.
+List an authenticated users flattrs. `obj.count` default to **30** and tells Flattr number of records to retrieve, `obj.page` defaults to **1**.
 
     flattrs.list_auth(token, function (data) {
 	    console.log(data);
@@ -103,6 +101,64 @@ Flattr an URL. `obj` holds optional query parameters for the auto-submit url.
 	        console.log(data);
 	    }
     );
+
+
+## Things
+
+A resource to list, add, update and search for things.
+
+http://developers.flattr.net/api/resources/things/
+
+    var flattrs = require('flattr').things;
+
+### things.list(user, [obj], callback)
+
+List a users things. `obj.count` default to **30** and tells Flattr number of records to retrieve, `obj.page` defaults to **1**.
+
+    things.list('flattr', { count: 10 }, function (data) {});
+
+### things.list_auth(token, [obj], callback)
+
+List the authenticated users things.
+
+### things.get(id, [token], callback)
+
+Get a thing with id of `id` or multiple things as an array of id's. Supplying a `token` should give extra data if resource owner owns the thing.
+
+    things.get(12345, function (data) {});
+	
+### things.exists(url, [autosubmit], callback)
+
+Check if a thing exists. If `autosubmit == true` it checks an auto submit url.
+
+    things.exists('http://github.com/antics/node-flattr', function (data) {});
+	
+### things.create(token, url, [obj], callback)
+
+Create a thing with the url `url` and submit optional extra information in `obj`.
+
+    var params = {
+	    title: 'NodeJS module for the flattr API',
+		tags: 'nodejs,flattr'
+	};
+    
+    things.create(token, 'github.com/antics/node-flattr', params, function (data) {});
+
+### things.update(token, id, [obj], callback)
+
+Update a thing with the id `id`.
+
+### things.del(token, id, callback)
+
+Delete thing with id `id`.
+
+    things.del(token, '1234', function (data) {
+        // if ok, data.message == 'ok'
+	});
+
+### things.search(params, callback)
+
+Search for things. `params` holds object with search parameters. See http://developers.flattr.net/api/resources/things/#search-things
 
 # Licence
 Copyright (C) 2012 Humanity
