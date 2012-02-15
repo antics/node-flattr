@@ -3,9 +3,6 @@ NodeJS module for the Flattr API
 
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=antics&url=https://github.com/antics/node-flattr&title=node-flattr&language=&tags=github&category=software)
 
-Under heavy development. Give me a couple of more days and this one will become 
-completed.
-
 Status:
 
 * flattr.flattrs **OK**
