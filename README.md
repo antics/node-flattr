@@ -17,6 +17,8 @@ Status:
 
 # Get Started
 
+    npm install flattr
+	
 Require the flattr module:
 
     var flattr = require('flattr');
