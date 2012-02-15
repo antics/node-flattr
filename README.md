@@ -111,7 +111,7 @@ A resource to list, add, update and search for things.
 
 http://developers.flattr.net/api/resources/things/
 
-    var flattrs = require('flattr').things;
+    var things = require('flattr').things;
 
 ### things.list(user, [obj], callback)
 
