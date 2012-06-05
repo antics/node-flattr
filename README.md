@@ -74,7 +74,7 @@ List an authenticated users flattrs. `obj.count` default to **30** and tells Fla
 
 Flattr a thing with id of `id`.
 
-    flattrs.id(token, 423405, function (data) {
+    flattrs.thing(token, 423405, function (data) {
 	    console.log(data);
 	});
 	
