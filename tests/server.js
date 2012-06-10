@@ -17,7 +17,7 @@ http.createServer(function (req, res) {
 	var path = url.parse(req.url).pathname;
 
 	if (path == '/') {
-		res.end('<a href="https://flattr.com/oauth/authorize?response_type=code&client_id='+app.client_id+'&scope=flattr thing extendedread">Login to flattr.</a>');
+		res.end('<a href="'+flattr.auth_url(app.client_id, 'flattr thing email extendedread')+'">Login to flattr.</a>');
 	}
 	else if (path == '/flattr') {
 		runtests(req, res);
@@ -66,9 +66,8 @@ function runtests(req, res) {
 			});
 		});
 
-		*/
 		//
-		// NOTE: This will flattr node-flattr and draw funds from your account
+		// NOTE: This will flattr and draw funds from your account
 		//
 		var params = {
 			title: 'Michels Vaktmästarservice',
@@ -81,7 +80,7 @@ function runtests(req, res) {
 				status: data.error ? true : false
 			});
 		});
-		/*
+
 		flattr.things.list('flattr', {count: 10}, function (data) {
 			done(res, {
 				resource: 'things.list',

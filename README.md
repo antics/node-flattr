@@ -20,11 +20,13 @@ Require the flattr module:
 
     var flattr = require('flattr');
 
-List an authenticated users flattrs:
+Authentication code and Token
 
 	// First get your auth code by visiting:
 	// https://flattr.com/oauth/authorize?response_type=code&client_id=<app_key>
-	//
+	// A helper is available to generate the url (with scopes):
+	// var url = flattr.auth_url(client_id, 'flattr thing email extendedread');
+	
     var app = {
         client_id: '<app_key>',
 		client_secret: '<app_secret>',
@@ -32,16 +34,20 @@ List an authenticated users flattrs:
 		redirect_uri: 'http://localhost:8080/flattr'
 	};
 	
-	flattr.request_token(app, code, function (token) {
-		flattr.flattrs.list_auth(token, function (flattrs_list) {
-		    // do something
-		});
+	// Get the token.
+	flattr.request_token(app, auth_code, function (token) {
+        console.log(token);
 	});
+
+List an authenticated users flattrs:
+    flattr.flattrs.list_auth(token, function (flattrs_list) {
+        console.log(flattrs_list);
+    });
 	
 List a users (flattr) three latest flattrs:
 
 	flattr.flattrs.list('flattr', {count: 3}, function (flattrs) {
-        // do something
+        console.log(flattrs);
 	});
 	
 # API

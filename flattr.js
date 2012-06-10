@@ -15,7 +15,19 @@ module.exports.flattrs = new Flattrs();
 module.exports.things = new Things();
 module.exports.users = new Users();
 
-// Requst an access token for authorized requests
+// Get authentication url
+//
+// client_id
+// scope - Separate several scopes with spaces: "flattr thing email extendedread"
+// [res_type] - Response type, code (default) or token
+//
+exports.auth_url = function (client_id, scope, res_type) {
+	var res_type = typeof res_type === 'undefined' ? 'code' : res_type; 
+
+	return url = 'https://flattr.com/oauth/authorize?response_type='+res_type+'&client_id='+client_id+'&scope='+encodeURIComponent(scope);
+}
+
+// Request an access token for authorized requests
 //
 // app - object containing application data
 //    client_id
