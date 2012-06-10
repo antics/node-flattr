@@ -138,16 +138,13 @@ function Flattrs () {
 	};
 
 	//
-	// TODO: Check how this one works. What happens if one submits an url
-	// to flattr without the user_id param?
-	//
 	// Flattr an URL
 	// Params is also available if you auto-submit an url.
 	//
 	// token - access token
 	// url - URL of the thing
-	// user - user owning the thing
-	// params (optional) -  
+	// [user] (optional) - user owning the thing
+	// [params] (optional) -  
 	//     title - Title of your your thing.
 	//     description -  Description for your thing.
 	//     language - Language of your page, use one of the available
@@ -160,17 +157,28 @@ function Flattrs () {
 	//
 	// callback - callback function
 	//
-	self.url = function (token, url, user, params, callback) {
+	self.url = function (token, url) {
 
 		var query_str = '';
-		
-		if (typeof params === 'object') {
-			for (key in params)
-				query_str += '&'+key+'='+params[key];
-		}
-		else if (typeof params === 'function')
-			callback = params;
 
+		var
+		user = '',
+		params = {},
+		callback = arguments[arguments.length-1];
+
+		if (typeof arguments[2] === 'string') {
+			user = arguments[2];
+
+			if (typeof arguments[3] === 'object')
+				params = arguments[3];
+		}
+
+		if (typeof arguments[2] === 'object')
+			params = arguments[2];
+
+		for (key in params)
+			query_str += '&'+key+'='+encodeURIComponent(params[key]);
+		
 		var
 		httpsopts = {
 			hostname: o.host,
@@ -185,7 +193,7 @@ function Flattrs () {
 			"url": 'http://flattr.com/submit/auto?user_id='+user+'&url='+
 				encodeURIComponent(checkurl(url))+query_str
 		};
-		
+
 		make_request(httpsopts, data, function (resp) {
 			callback(resp);
 		});

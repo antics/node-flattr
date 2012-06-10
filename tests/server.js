@@ -31,7 +31,7 @@ http.createServer(function (req, res) {
 
 function runtests(req, res) {
 
-	NUM_TESTS = 2;
+	NUM_TESTS = 1;
 	
 	var code = url.parse(req.url, true).query.code;
 
@@ -66,22 +66,22 @@ function runtests(req, res) {
 			});
 		});
 
-
+		*/
 		//
 		// NOTE: This will flattr node-flattr and draw funds from your account
 		//
 		var params = {
-			title: 'node-flattr: NodeJS module for the flattr API.',
-			tags: 'nodejs, module, api, flattr'
+			title: 'Michels Vaktmästarservice',
+			tags: 'vaktmästare, vvs, reparation, återvinning, bärhjälp, malmö'
 		};
-		flattr.flattrs.url(token, 'https://github.com/antics/node-flattr', 'antics', params, function (data) {
+		flattr.flattrs.url(token, 'http://vaktis.nu', 'antics', params, function (data) {
 			done(res, {
 				resource: 'flattrs.url',
 				message: data.error ? data.error_description : data.description,
 				status: data.error ? true : false
 			});
 		});
-
+		/*
 		flattr.things.list('flattr', {count: 10}, function (data) {
 			done(res, {
 				resource: 'things.list',
@@ -89,7 +89,7 @@ function runtests(req, res) {
 				status: data.error ? true : false
 			});	
 		});
-		*/
+
 		flattr.things.get(423405, function (data) {
 			done(res, {
 				resource: 'things.get',
@@ -105,7 +105,7 @@ function runtests(req, res) {
 				status: data.error ? true : false
 			});	
 		});
-		/*
+
 		flattr.things.exists('https://github.com/antics/node-flattr', function (data) {
 			done(res, {
 				resource: 'things.exists',

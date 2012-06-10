@@ -78,9 +78,9 @@ Flattr a thing with id of `id`.
 	    console.log(data);
 	});
 	
-### flattrs.url(token, url, user, [obj], callback)
+### flattrs.url(token, url, [user], [obj], callback)
 
-Flattr an URL. `obj` holds optional query parameters for the auto-submit url.
+Flattr an URL. `obj` holds optional query parameters for the auto-submit url. You can submit things without a user (see: http://stackoverflow.com/a/9307116/691679).
 
     var params = {
 	    title: 'Optional title',
