@@ -39,6 +39,10 @@ Authentication code and Token
         console.log(token);
 	});
 
+Note: If you use tokens, do not forget to specify the *res_type* parameter:
+	
+	var url = flattr.auth_url(client_id, 'flattr thing email extendedread', 'token');
+
 List an authenticated users flattrs:
 
     flattr.flattrs.list_auth(token, function (flattrs_list) {
