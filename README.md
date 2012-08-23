@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/antics/node-flattr.png)](http://travis-ci.org/antics/node-flattr)
 NodeJS module for the Flattr API
 ================================
 
